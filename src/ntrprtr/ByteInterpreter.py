@@ -9,12 +9,16 @@ class ByteInterpreter():
     def interpret(self):
         result = []
         for c in self._config:
-           b = bytearray()
-           amount = c["end"] - c["start"] + 1
-           subBytes = [self._bytes[i:i + amount] for i in range(c["start"], c["end"]+1, amount)][0]
-           b.extend(subBytes)
-           actionResult = self.__getActionResult(c["action"], b)
-           result.append((c["name"], c["description"], c["action"]["type"], b, actionResult))
+            b = bytearray()
+            amount = c["end"] - c["start"] + 1
+            subBytes = [self._bytes[i:i + amount] for i in range(c["start"], c["end"]+1, amount)][0]
+            b.extend(subBytes)
+            if(c.get("action") != None):
+                actionResult = self.__getActionResult(c["action"], b)
+                result.append((c["name"], c["description"], c["action"]["type"], b, actionResult))
+            else:
+                actionResult = ""
+                result.append((c["name"], c["description"], "None", b, actionResult)) 
         return result
 
     def __getActionResult(self, action, b):

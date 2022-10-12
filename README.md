@@ -17,6 +17,7 @@ with the following structure:
         "action": {  // There a 3 different actions at the moment. 
                      // --> Do only specify one action per object here.
                      // --> The actions are specified below.
+                     // --> You do not need to provide an action.
         }
     }
 ]
