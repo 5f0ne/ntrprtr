@@ -50,7 +50,9 @@ The following actions are available:
             },{
                 "value": "1D1",
                 "description": "Compare 2"
-            }]
+            }],
+    // The result if there was no match 
+    "noMatch": "No Match found!"
 }
 ```
 
@@ -107,7 +109,8 @@ Use the following `config.json`:
             },{
                 "value": "1D1",
                 "description": "Compare 2"
-            }]
+            }],
+            "noMatch": "No Match found!"
         }
     }
 ]

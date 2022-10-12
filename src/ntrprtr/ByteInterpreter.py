@@ -33,6 +33,7 @@ class ByteInterpreter():
         elif(type_ == "ascii"):
             result = self._cnvrtr.hexToAsciiString(b.hex())
         elif(type_ == "equals"):
+            result = action["noMatch"]
             for i in range(0, len(action["cmp"])):
                 if(b.hex() == action["cmp"][i]["value"].lower()):
                     result = action["cmp"][i]["description"]
