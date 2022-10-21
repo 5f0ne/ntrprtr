@@ -1,4 +1,5 @@
 class ActionType():
-    AMOUNT = "amount"
+    DECIMAL = "decimal"
     ASCII = "ascii"
     EQUALS = "equals"
+    BINARY = "binary"

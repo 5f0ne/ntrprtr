@@ -1,8 +1,9 @@
 from cnvrtr.Converter import Converter
 
 from ntrprtr.action.ActionType import ActionType
-from ntrprtr.action.AmountAction import AmountAction
+from ntrprtr.action.DecimalAction import DecimalAction
 from ntrprtr.action.AsciiAction import AsciiAction
+from ntrprtr.action.BinaryAction import BinaryAction
 from ntrprtr.action.EqualsAction import EqualsAction
 
 class ByteInterpreter():
@@ -30,12 +31,15 @@ class ByteInterpreter():
     def __processActions(self, action, b):
         result = ""
         type_ = action["type"]
-        if(type_ == ActionType.AMOUNT):
-            result = AmountAction().process(action, b)
+        if(type_ == ActionType.DECIMAL):
+            result = DecimalAction().process(action, b)
         elif(type_ == ActionType.ASCII):
             result = AsciiAction().process(action, b)
         elif(type_ == ActionType.EQUALS):
             result = EqualsAction().process(action, b)
+        elif(type_ == ActionType.BINARY):
+            result = BinaryAction().process(action, b)
+
         return result
 
     

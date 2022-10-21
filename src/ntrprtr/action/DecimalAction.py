@@ -1,6 +1,6 @@
 from ntrprtr.action.ActionBase import ActionBase
 
-class AmountAction(ActionBase):
+class DecimalAction(ActionBase):
     def __init__(self):
         super().__init__()
 

@@ -28,7 +28,14 @@ The following actions are available:
 // Get the decimal value of the given bytes.
 // Specify if you want to interpret it as little or big endian
 {
-    "type": "amount",
+    "type": "decimal",
+    "endianess": "little|big"
+}
+
+// Get the binary value of the given bytes.
+// Specify if you want to interpret it as little or big endian
+{
+    "type": "binary",
     "endianess": "little|big"
 }
 
