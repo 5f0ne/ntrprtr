@@ -1,6 +1,8 @@
 from cnvrtr.Converter import Converter
 
 from ntrprtr.action.ActionType import ActionType
+from ntrprtr.action.DOSDateAction import DOSDateAction
+from ntrprtr.action.DOSTimeAction import DOSTimeAction
 from ntrprtr.action.DecimalAction import DecimalAction
 from ntrprtr.action.AsciiAction import AsciiAction
 from ntrprtr.action.BinaryAction import BinaryAction
@@ -42,6 +44,10 @@ class ByteInterpreter():
             result = BinaryAction().process(action, b)
         elif(type_ == ActionType.HEXDUMP):
             result = HexdumpAction().process(action, b)
+        elif(type_ == ActionType.DOSDATE):
+            result = DOSDateAction().process(action, b)
+        elif(type_ == ActionType.DOSTIME):
+            result = DOSTimeAction().process(action, b)
 
         return result
 
