@@ -1,10 +1,16 @@
 from cnvrtr.Converter import Converter
 
+from ntrprtr.action.ActionType import ActionType
+from ntrprtr.action.AmountAction import AmountAction
+from ntrprtr.action.AsciiAction import AsciiAction
+from ntrprtr.action.EqualsAction import EqualsAction
+
 class ByteInterpreter():
     def __init__(self, bytes, config) -> None:
         self._bytes = bytes
         self._config = config
         self._cnvrtr = Converter()
+        
 
     def interpret(self):
         result = []
@@ -14,31 +20,22 @@ class ByteInterpreter():
             subBytes = [self._bytes[i:i + amount] for i in range(c["start"], c["end"]+1, amount)][0]
             b.extend(subBytes)
             if(c.get("action") != None):
-                actionResult = self.__getActionResult(c["action"], b)
+                actionResult = self.__processActions(c["action"], b)
                 result.append((c["name"], c["description"], c["action"]["type"], b, actionResult))
             else:
                 actionResult = ""
                 result.append((c["name"], c["description"], "None", b, actionResult)) 
         return result
 
-    def __getActionResult(self, action, b):
+    def __processActions(self, action, b):
         result = ""
         type_ = action["type"]
-        if(type_ == "amount"):
-            endianess = action["endianess"]
-            if(endianess == "big"):
-                result = self._cnvrtr.hexToDec(b.hex())
-            elif(endianess == "little"):
-                result = self.__hexToLittleEndianToDec(b)
-        elif(type_ == "ascii"):
-            result = self._cnvrtr.hexToAsciiString(b.hex())
-        elif(type_ == "equals"):
-            result = action["noMatch"]
-            for i in range(0, len(action["cmp"])):
-                if(b.hex() == action["cmp"][i]["value"].lower()):
-                    result = action["cmp"][i]["description"]
+        if(type_ == ActionType.AMOUNT):
+            result = AmountAction().process(action, b)
+        elif(type_ == ActionType.ASCII):
+            result = AsciiAction().process(action, b)
+        elif(type_ == ActionType.EQUALS):
+            result = EqualsAction().process(action, b)
         return result
 
-    def __hexToLittleEndianToDec(self, byteArr):
-        le = self._cnvrtr.toLittleEndian(byteArr.hex(" "))
-        return str(self._cnvrtr.hexToDec(le))
+    
