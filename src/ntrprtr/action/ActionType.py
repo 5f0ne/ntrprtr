@@ -3,3 +3,4 @@ class ActionType():
     ASCII = "ascii"
     EQUALS = "equals"
     BINARY = "binary"
+    HEXDUMP = "hexdump"

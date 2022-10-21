@@ -5,6 +5,7 @@ from ntrprtr.action.DecimalAction import DecimalAction
 from ntrprtr.action.AsciiAction import AsciiAction
 from ntrprtr.action.BinaryAction import BinaryAction
 from ntrprtr.action.EqualsAction import EqualsAction
+from ntrprtr.action.HexdumpAction import HexdumpAction
 
 class ByteInterpreter():
     def __init__(self, bytes, config) -> None:
@@ -39,6 +40,8 @@ class ByteInterpreter():
             result = EqualsAction().process(action, b)
         elif(type_ == ActionType.BINARY):
             result = BinaryAction().process(action, b)
+        elif(type_ == ActionType.HEXDUMP):
+            result = HexdumpAction().process(action, b)
 
         return result
 

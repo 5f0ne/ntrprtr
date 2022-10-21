@@ -44,6 +44,12 @@ The following actions are available:
     "type": "ascii"
 }
 
+// Provides a hexdump for the given bytes
+// Creates a formatted hexdump, just print the result
+{
+    "type": "ascii"
+}
+
 // Compare the given bytes against your own values:
 {
     "type": "equals",
@@ -94,13 +100,32 @@ Use the following `config.json`:
             "endianess": "little"
         }
     },
-     {
+    {
+        "name": "bin-bytes",
+        "description": "Binary bytes",
+        "start": 2,
+        "end": 3,
+        "action": {
+            "type": "binary",
+            "endianess": "little"
+        }
+    },
+    {
         "name": "ascii-bytes",
         "description": "These are ascii values",
         "start": 16,
         "end": 26,
         "action": {
             "type": "ascii"
+        }
+    },
+    {
+        "name": "hexdump-bytes",
+        "description": "Hexdump values",
+        "start": 0,
+        "end": 3,
+        "action": {
+            "type": "hexdump"
         }
     },
     {
@@ -149,10 +174,22 @@ The result is a list of tuples:
 [
 #     Name           Description          Action   Bytes                        ActionResult
     ('first-bytes', 'First three bytes', 'amount', bytearray(b'\x00\x01\x02'), '131328'), 
+    ('bin-bytes',   'Binary bytes',      'binary', bytearray(b'\x02\x03'),     '0000 0011 0000 0010')
     ('ascii-bytes', 'Ascii values',      'ascii',  bytearray(b'hallo world'),  'hallo world'), 
+    ('hexdump-bytes', 'Hexdump values', 'hexdump', bytearray(b'\x00\x01\x02'), 'See below')
     ('equals-bytes', 'Test equals',      'equals', bytearray(b'\x1d\x1e'),     'Compare 1')
 ]
 ```
+
+For `HexdumpAction` the following `ActionResult` is provided as a string:
+
+```
+  Offset   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F    ASCII
+--------   -----------------------------------------------    ----------------
+       0   00 01 02                                           ...
+```
+
+Just print the string, it will be formatted correctly.
 
 # License
 
