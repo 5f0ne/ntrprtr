@@ -67,6 +67,18 @@ The following actions are available:
     // The result if there was no match 
     "noMatch": "No Match found!"
 }
+
+// Interprets 2 Bytes as DOS time as format hour:minute:seconds
+{
+    "type": "dostime",
+    "endianess": "little"
+}
+
+// Interprets 2 Bytes as DOS date as format day.month.year
+{
+    "type": "dosdate",
+    "endianess": "little"
+}
 ```
 
 Just add as many interpreting objects as you want to the list. The output is a list of tuples. Look at the example section for an overview.
@@ -144,6 +156,26 @@ Use the following `config.json`:
             }],
             "noMatch": "No Match found!"
         }
+    },
+      {
+        "name": "dos-time-bytes",
+        "description": "DOS time bytes",
+        "start": 32,
+        "end": 33,
+        "action": {
+            "type": "dostime",
+            "endianess": "little"
+        }
+    },
+    {
+        "name": "dos-date-bytes",
+        "description": "DOS date bytes",
+        "start": 34,
+        "end": 35,
+        "action": {
+            "type": "dosdate",
+            "endianess": "little"
+        }
     }
 ]
 ```
@@ -174,10 +206,12 @@ The result is a list of tuples:
 [
 #     Name           Description          Action   Bytes                        ActionResult
     ('first-bytes', 'First three bytes', 'amount', bytearray(b'\x00\x01\x02'), '131328'), 
-    ('bin-bytes',   'Binary bytes',      'binary', bytearray(b'\x02\x03'),     '0000 0011 0000 0010')
+    ('bin-bytes',   'Binary bytes',      'binary', bytearray(b'\x02\x03'),     '0000 0011 0000 0010'),
     ('ascii-bytes', 'Ascii values',      'ascii',  bytearray(b'hallo world'),  'hallo world'), 
-    ('hexdump-bytes', 'Hexdump values', 'hexdump', bytearray(b'\x00\x01\x02'), 'See below')
-    ('equals-bytes', 'Test equals',      'equals', bytearray(b'\x1d\x1e'),     'Compare 1')
+    ('hexdump-bytes', 'Hexdump values', 'hexdump', bytearray(b'\x00\x01\x02'), 'See below'),
+    ('equals-bytes', 'Test equals',      'equals', bytearray(b'\x1d\x1e'),     'Compare 1'),
+    ('dos-time-bytes', 'DOS time bytes', 'dostime', bytearray(b'C\xb7'),       '22:58:6'),
+    ('dos-date-bytes', 'DOS date bytes', 'dosdate', bytearray(b'gB'),          '7.3.2013')
 ]
 ```
 
