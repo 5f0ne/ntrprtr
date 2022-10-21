@@ -96,6 +96,7 @@ Given bytes to interpret:
 ```
 00 01 02 03 04 04 06 07 08 09 0A 0B 0C 0D 0E 0F 
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
+43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
 ```
 
 Use the following `config.json`:
