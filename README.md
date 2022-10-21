@@ -47,7 +47,7 @@ The following actions are available:
 // Provides a hexdump for the given bytes
 // Creates a formatted hexdump, just print the result
 {
-    "type": "ascii"
+    "type": "hexdump"
 }
 
 // Compare the given bytes against your own values:
