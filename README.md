@@ -41,19 +41,26 @@ The following actions are available:
 
 // Get the ascii representation of the given bytes.
 {
-    "type": "ascii"
+    "type": "ascii",
+    "nonAsciiPlaceholder": "."
+}
+
+// Get the unicode representation of the given bytes.
+{
+    "type": "unicode",
+    "endianess": "little|big"
 }
 
 // Provides a hexdump for the given bytes
-// Creates a formatted hexdump, just print the result
 {
-    "type": "hexdump"
+    "type": "hexdump",
+    "nonAsciiPlaceholder": "."
 }
 
 // Compare the given bytes against your own values:
 {
     "type": "equals",
-    "endianess": "big",
+    "endianess": "little|big",
     // Add as many objects as you want to the "cmp" list
     "cmp": [{
                 // The value you want to compare with the given bytes
@@ -72,7 +79,7 @@ The following actions are available:
 // Compare the bits of the given bytes against your own values
 {
     "type": "bitequals",
-    "endianess": "big",
+    "endianess": "little|big",
     // Add as many objects as you want to the "cmp" list
     "cmp": [{
                 // The bits you want to compare
@@ -88,18 +95,17 @@ The following actions are available:
 // Interprets 2 Bytes as DOS time - format hour:minute:seconds
 {
     "type": "dostime",
-    "endianess": "little"
+    "endianess": "little|big"
 }
 
 // Interprets 2 Bytes as DOS date - format day.month.year
 {
     "type": "dosdate",
-    "endianess": "little"
+    "endianess": "little|big"
 }
 ```
 
 Just add as many interpreting objects as you want to the list. The output is a list of tuples. Look at the example section for an overview.
-
 
 
 # Installation
@@ -114,6 +120,7 @@ Given bytes to interpret:
 00 01 02 03 04 04 06 07 08 09 0A 0B 0C 0D 0E 0F 
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
 43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
+79 00 5F 00 30 00 31 00 2E 00 6A 00
 ```
 
 Use the following `config.json`:
@@ -146,7 +153,8 @@ Use the following `config.json`:
         "start": 16,
         "end": 26,
         "action": {
-            "type": "ascii"
+            "type": "ascii",
+            "nonAsciiPlaceholder": "."
         }
     },
     {
@@ -155,7 +163,8 @@ Use the following `config.json`:
         "start": 0,
         "end": 3,
         "action": {
-            "type": "hexdump"
+            "type": "hexdump",
+            "nonAsciiPlaceholder": "."
         }
     },
     {
@@ -193,7 +202,7 @@ Use the following `config.json`:
             "noMatch": "Bits are not equal!"
         }
     },
-    {
+      {
         "name": "dos-time-bytes",
         "description": "DOS time bytes",
         "start": 32,
@@ -211,6 +220,16 @@ Use the following `config.json`:
         "action": {
             "type": "dosdate",
             "endianess": "little"
+        }
+    },
+    {
+        "name": "unicode-bytes",
+        "description": "unicode repr.",
+        "start": 48,
+        "end": 59,
+        "action": {
+            "type": "unicode",
+            "endianess": "big"
         }
     }
 ]
@@ -251,9 +270,10 @@ The result is a list of tuples:
     ('ascii-bytes', 'Ascii values',      'ascii',    bytearray(b'hallo world'),  'hallo world'), 
     ('hexdump-bytes', 'Hexdump values', 'hexdump',   bytearray(b'\x00\x01\x02'), 'See below'),
     ('equals-bytes', 'Test equals',      'equals',   bytearray(b'\x1d\x1e'),     'Compare 1'),
-    ('bitEquals', 'Check bit equality', 'bitequals', bytearray(b'\x77'),         'Bits are equal'),
+    ('bitEquals',       'Bit equality', 'bitequals', bytearray(b'\x77'),         'Bits are equal'),
     ('dos-time-bytes', 'DOS time bytes', 'dostime',  bytearray(b'C\xb7'),        '22:58:6'),
-    ('dos-date-bytes', 'DOS date bytes', 'dosdate',  bytearray(b'gB'),           '7.3.2013')
+    ('dos-date-bytes', 'DOS date bytes', 'dosdate',  bytearray(b'...'),          '7.3.2013')
+    ('unicode-bytes', 'unicode repr.',   'unicode',  bytearray(b'...'),          '7.3.2013')
 ]
 ```
 The output from printer looks like the following:
@@ -313,6 +333,12 @@ The output from printer looks like the following:
     67 42
     --------------
     7.3.2013
+
+--> unicode repr.
+    --------------
+    79 00 5F 00 30 00 31 00 2E 00 6A 00
+    --------------
+    y_01.j
 
 ```
 

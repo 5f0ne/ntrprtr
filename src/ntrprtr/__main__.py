@@ -3,6 +3,7 @@ import json
 
 import argparse
 
+
 def main(args_=None):
     """The main routine."""
     if args_ is None:

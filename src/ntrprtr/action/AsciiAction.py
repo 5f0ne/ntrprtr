@@ -5,4 +5,5 @@ class AsciiAction(ActionBase):
         super().__init__()
 
     def process(self, action, _bytes):
+        self._cnvrtr._nonAsciiPlaceholder = action["nonAsciiPlaceholder"]
         return self._cnvrtr.hexToAsciiString(_bytes.hex())

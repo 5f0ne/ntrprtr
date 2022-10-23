@@ -9,7 +9,7 @@ class HexdumpAction(ActionBase):
         result = self.__createHexHeader()
         splittedBytes = [_bytes[i:i + 16] for i in range(0, len(_bytes), 16)]
         for b_ in splittedBytes:
-            result += self.__createHexRow(offset_, b_.hex(" "), b_)
+            result += self.__createHexRow(offset_, b_.hex(" "), b_, action["nonAsciiPlaceholder"])
             offset_ += 16  
         return result
 
@@ -22,9 +22,9 @@ class HexdumpAction(ActionBase):
         result += ("-"*8) + "   " + ("-"*47) + "    " + ("-"*16) +" \n"
         return result
 
-    def __createHexRow(self, offset, hex_, bytes_):
+    def __createHexRow(self, offset, hex_, bytes_, placeholder):
         formatStr = "{:8}   {:47}    {:16}"
-        asc = "".join(chr(v) if (v >= 32 and v <= 126) else "." for v in bytes_)
+        asc = "".join(chr(v) if (v >= 32 and v <= 126) else placeholder for v in bytes_)
         r = formatStr.format(offset, hex_.upper(), asc)
         return r + " \n"
 

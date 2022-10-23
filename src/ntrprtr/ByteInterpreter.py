@@ -7,6 +7,7 @@ from ntrprtr.action.BinaryAction import BinaryAction
 from ntrprtr.action.EqualsAction import EqualsAction
 from ntrprtr.action.BitEqualsAction import BitEqualsAction
 from ntrprtr.action.HexdumpAction import HexdumpAction
+from ntrprtr.action.UnicodeAction import UnicodeAction
 
 class ByteInterpreter():
     def __init__(self, bytes, config) -> None:
@@ -47,6 +48,8 @@ class ByteInterpreter():
             result = DOSDateAction().process(action, b)
         elif(type_ == ActionType.DOSTIME):
             result = DOSTimeAction().process(action, b)
+        elif(type_ == ActionType.UNICODE):
+            result = UnicodeAction().process(action, b)
 
         return result
 
