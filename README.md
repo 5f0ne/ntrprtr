@@ -109,7 +109,7 @@ Use the following `config.json`:
         "start": 0,
         "end": 2,
         "action": {
-            "type": "amount",
+            "type": "decimal",
             "endianess": "little"
         }
     },
@@ -187,6 +187,7 @@ Use it programmatically:
 import json
 
 from ntrprtr.ByteInterpreter import ByteInterpreter
+from ntrprtr.printer.Printer import Printer
 
 configPath = "config.json"
 pathToFile = "example.dd" # Contains the above bytes
@@ -200,13 +201,17 @@ config = json.load(configHandle)
 
 b = ByteInterpreter(testBytes, config)
 result = b.interpret()
+
+# If you want a standard output use Printer
+p = Printer()
+p.print(result)
 ```
 
 The result is a list of tuples:
 ```python
 [
 #     Name           Description          Action   Bytes                        ActionResult
-    ('first-bytes', 'First three bytes', 'amount', bytearray(b'\x00\x01\x02'), '131328'), 
+    ('first-bytes', 'First three bytes', 'decimal', bytearray(b'\x00\x01\x02'), '131328'), 
     ('bin-bytes',   'Binary bytes',      'binary', bytearray(b'\x02\x03'),     '0000 0011 0000 0010'),
     ('ascii-bytes', 'Ascii values',      'ascii',  bytearray(b'hallo world'),  'hallo world'), 
     ('hexdump-bytes', 'Hexdump values', 'hexdump', bytearray(b'\x00\x01\x02'), 'See below'),
@@ -215,16 +220,55 @@ The result is a list of tuples:
     ('dos-date-bytes', 'DOS date bytes', 'dosdate', bytearray(b'gB'),          '7.3.2013')
 ]
 ```
-
-For `HexdumpAction` the following `ActionResult` is provided as a string:
+The output from printer looks like the following:
 
 ```
-  Offset   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F    ASCII
---------   -----------------------------------------------    ----------------
-       0   00 01 02                                           ...
-```
+--> This are the first three bytes
+    --------------
+    00 01 02
+    --------------
+    131328
 
-Just print the string, it will be formatted correctly.
+--> Binary bytes
+    --------------
+    02 03
+    --------------
+    0000 0011 0000 0010
+
+--> These are ascii values
+    --------------
+    68 61 6C 6C 6F 20 77 6F 72 6C 64
+    --------------
+    hallo world
+
+--> Hexdump values
+    --------------
+    Hexdump
+    --------------
+
+      Offset   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F    ASCII           
+    --------   -----------------------------------------------    ---------------- 
+           0   00 01 02 03                                        ....             
+    
+
+--> Test if the given bytes equals my specified bytes
+    --------------
+    1D 1E
+    --------------
+    Compare 1
+
+--> DOS time bytes
+    --------------
+    43 B7
+    --------------
+    22:58:6
+
+--> DOS date bytes
+    --------------
+    67 42
+    --------------
+    7.3.2013
+```
 
 # License
 
