@@ -1,5 +1,3 @@
-from cnvrtr.Converter import Converter
-
 from ntrprtr.action.ActionType import ActionType
 from ntrprtr.action.DOSDateAction import DOSDateAction
 from ntrprtr.action.DOSTimeAction import DOSTimeAction
@@ -7,14 +5,13 @@ from ntrprtr.action.DecimalAction import DecimalAction
 from ntrprtr.action.AsciiAction import AsciiAction
 from ntrprtr.action.BinaryAction import BinaryAction
 from ntrprtr.action.EqualsAction import EqualsAction
+from ntrprtr.action.BitEqualsAction import BitEqualsAction
 from ntrprtr.action.HexdumpAction import HexdumpAction
 
 class ByteInterpreter():
     def __init__(self, bytes, config) -> None:
         self._bytes = bytes
-        self._config = config
-        self._cnvrtr = Converter()
-        
+        self._config = config        
 
     def interpret(self):
         result = []
@@ -40,6 +37,8 @@ class ByteInterpreter():
             result = AsciiAction().process(action, b)
         elif(type_ == ActionType.EQUALS):
             result = EqualsAction().process(action, b)
+        elif(type_ == ActionType.BITEQUALS):
+            result = BitEqualsAction().process(action, b)
         elif(type_ == ActionType.BINARY):
             result = BinaryAction().process(action, b)
         elif(type_ == ActionType.HEXDUMP):

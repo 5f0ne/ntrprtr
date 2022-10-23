@@ -53,6 +53,7 @@ The following actions are available:
 // Compare the given bytes against your own values:
 {
     "type": "equals",
+    "endianess": "big",
     // Add as many objects as you want to the "cmp" list
     "cmp": [{
                 // The value you want to compare with the given bytes
@@ -68,13 +69,29 @@ The following actions are available:
     "noMatch": "No Match found!"
 }
 
-// Interprets 2 Bytes as DOS time as format hour:minute:seconds
+// Compare the bits of the given bytes against your own values
+{
+    "type": "bitequals",
+    "endianess": "big",
+    // Add as many objects as you want to the "cmp" list
+    "cmp": [{
+                // The bits you want to compare
+                "value": "01110111",
+                // Description to be added to the result,
+                // if bits machtes "value"
+                "description": "Bits are equal"
+            }],
+    // The result if there was no match 
+    "noMatch": "Bits are not equal!"
+}
+
+// Interprets 2 Bytes as DOS time - format hour:minute:seconds
 {
     "type": "dostime",
     "endianess": "little"
 }
 
-// Interprets 2 Bytes as DOS date as format day.month.year
+// Interprets 2 Bytes as DOS date - format day.month.year
 {
     "type": "dosdate",
     "endianess": "little"
@@ -148,6 +165,7 @@ Use the following `config.json`:
         "end": 30,
         "action": {
             "type": "equals",
+            "endianess": "big",
             "cmp": [{
                 "value": "1D1E",
                 "description": "Compare 1"
@@ -158,7 +176,24 @@ Use the following `config.json`:
             "noMatch": "No Match found!"
         }
     },
-      {
+    {
+        "name": "bitEquals",
+        "description": "Check bit equality",
+        "start": 22,
+        "end": 22,
+        "action":{
+            "type": "bitequals",
+            "endianess": "big",
+            "cmp": [
+                {
+                    "value": "01110111",
+                    "description": "Bits are equal"
+                }
+            ],
+            "noMatch": "Bits are not equal!"
+        }
+    },
+    {
         "name": "dos-time-bytes",
         "description": "DOS time bytes",
         "start": 32,
@@ -210,19 +245,21 @@ p.print(result)
 The result is a list of tuples:
 ```python
 [
-#     Name           Description          Action   Bytes                        ActionResult
-    ('first-bytes', 'First three bytes', 'decimal', bytearray(b'\x00\x01\x02'), '131328'), 
-    ('bin-bytes',   'Binary bytes',      'binary', bytearray(b'\x02\x03'),     '0000 0011 0000 0010'),
-    ('ascii-bytes', 'Ascii values',      'ascii',  bytearray(b'hallo world'),  'hallo world'), 
-    ('hexdump-bytes', 'Hexdump values', 'hexdump', bytearray(b'\x00\x01\x02'), 'See below'),
-    ('equals-bytes', 'Test equals',      'equals', bytearray(b'\x1d\x1e'),     'Compare 1'),
-    ('dos-time-bytes', 'DOS time bytes', 'dostime', bytearray(b'C\xb7'),       '22:58:6'),
-    ('dos-date-bytes', 'DOS date bytes', 'dosdate', bytearray(b'gB'),          '7.3.2013')
+#     Name           Description          Action     Bytes                        ActionResult
+    ('first-bytes', 'First three bytes', 'decimal',  bytearray(b'\x00\x01\x02'), '131328'), 
+    ('bin-bytes',   'Binary bytes',      'binary',   bytearray(b'\x02\x03'),     '0000 0011 0000 0010'),
+    ('ascii-bytes', 'Ascii values',      'ascii',    bytearray(b'hallo world'),  'hallo world'), 
+    ('hexdump-bytes', 'Hexdump values', 'hexdump',   bytearray(b'\x00\x01\x02'), 'See below'),
+    ('equals-bytes', 'Test equals',      'equals',   bytearray(b'\x1d\x1e'),     'Compare 1'),
+    ('bitEquals', 'Check bit equality', 'bitequals', bytearray(b'\x77'),         'Bits are equal'),
+    ('dos-time-bytes', 'DOS time bytes', 'dostime',  bytearray(b'C\xb7'),        '22:58:6'),
+    ('dos-date-bytes', 'DOS date bytes', 'dosdate',  bytearray(b'gB'),           '7.3.2013')
 ]
 ```
 The output from printer looks like the following:
 
 ```
+
 --> This are the first three bytes
     --------------
     00 01 02
@@ -257,6 +294,14 @@ The output from printer looks like the following:
     --------------
     Compare 1
 
+--> Check bit equality
+    --------------
+    77
+    --------------
+    0111 0111
+    --------------
+    Bits are equal
+
 --> DOS time bytes
     --------------
     43 B7
@@ -268,6 +313,7 @@ The output from printer looks like the following:
     67 42
     --------------
     7.3.2013
+
 ```
 
 # License
