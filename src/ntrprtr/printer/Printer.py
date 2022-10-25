@@ -5,10 +5,18 @@ class Printer():
     def __init__(self) -> None:
         self._cnvrtr = Converter(nonAsciiPlaceholder=".")
 
-    def print(self, results):
+    def print(self, results, name="ntrprtr", description="Interpret bytes through different customizable actions"):
+        print("")
+        print(name)
+        print("-"*len(name))
+        print(description)
+        print("")
+        print("")
+        print("Analysis")
+        print("--------")
+
         for result in results:
             hexWritten = False
-            print("")
             print("")
             print("--> " + result[1])
             print("    --------------")
@@ -37,3 +45,4 @@ class Printer():
                     print("            " + actionResult[0])
                     print("    " + "Result: ")
                     print("            " + str(actionResult[1]))
+            print("")

@@ -20,7 +20,8 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where='src'),
     install_requires=[
-        "cnvrtr==1.1.1"
+        "cnvrtr==1.1.1",
+        "hash_calc==1.1.0"
     ],
      entry_points={
         "console_scripts": [

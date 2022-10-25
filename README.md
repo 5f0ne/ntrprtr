@@ -2,27 +2,38 @@
 
 Interpret bytes through different customizable actions
 
+# Installation
+
+`pip install ntrprtr`
+
 # Configuration
 
-In order to interpet the given bytes, you need to provide a ´.json´ file
+In order to interpet the given bytes, you need to provide a `.json` file
 with the following structure:
 
 ```json
-[
-    {
-        "name": "Enter the name here..",
-        "description": "Provide description here..",
-        "start": 0,  // The start byte from where you want to interpret
-        "end": 10,   // The end byte where interpreting shall stop
-        "action": [   
-                     // --> Specify as many actions as you want.
-                     // --> Each action will be applied to the specified bytes
-                     // --> The actions are specified below.
-                     // --> You do not need to provide an action.
-        ]
-    }
-]
+{
+    "name": "ntrprtr example",
+    "description": "This is a description within the result",
+    // Specify as many ntrprtr objects as you want
+    "ntrprtr": [
+        {
+            "name": "Enter the name here..",
+            "description": "Provide description here..",
+            "start": 0,  // The start byte from where you want to interpret
+            "end": 10,   // The end byte where interpreting shall stop
+            "action": [   
+                        // --> Specify as many actions as you want
+                        // --> Each action will be applied to the specified bytes
+                        // --> You do not need to provide an action
+                        // --> Output is a list of tuples (more information in example section)
+                        // --> The actions are specified below
+            ]
+        }
+    ]
+}    
 ```
+
 The following actions are available:
 
 ```json
@@ -114,14 +125,74 @@ The following actions are available:
 }
 ```
 
-Just add as many interpreting objects as you want to the list. The output is a list of tuples. Look at the example section for an overview.
+# Options
+
+`python -m ntrprtr --mode {config,interpret} [--amount AMOUNT] [--name NAME] [--target TARGET] [--config CONFIG] [--result RESULT] [--offset OFFSET] [--bytes BYTES]`
+
+<hr>
+
+**General**
+
+| Option | Short | Type | Default | Description |
+|---|---|---|---|---|
+|--mode | -p | String | - | config = Create a configuration template <br> interpret = Overview of disk space usage |
+|--offset | -o | Int | - | The offset in bytes to start reading |
+
+<hr>
+
+**mode = config**
+
+| Option | Short | Type | Default | Description |
+|---|---|---|---|---|
+|--amount | -a | Int | 1 | Create a config with the given number of objects |
+|--name | -n | String | config.json | Name of the config file to be created |
 
 
-# Installation
+<hr>
 
-`pip install ntrprtr`
+**mode = interpret**
+
+| Option | Short | Type | Default | Description |
+|---|---|---|---|---|
+|--target | -t | String | - | Path to file which shall be interpreted |
+|--config | -c | String | - | Path to config file |
+|--result | -r | String | - | Path to result file |
+|--offset | -o | Int | 0 | Offset in bytes to start reading |
+|--bytes  | -b | Int | 0 | No. of bytes to read starting from offset |
+|--disableHashing | -d | Bool | False | True if hashing shall be disabled <br> False otherwise|
+
 
 # Example
+
+**Shell:**
+
+```bash
+# Create a config template
+python -m ntrprtr -m config -a 10 -n ntrprtr-config.json
+```
+
+```bash
+# Interprets example.dd with config.json
+python -m ntrprtr -m interpret -t path/to/example.dd -c config.json
+```
+
+```bash
+# Interprets example.dd with config.json and write it to result.txt
+python -m ntrprtr -m interpret -t path/to/example.dd -c config.json -r result.txt
+```
+
+```bash
+# Interprets example.dd starting at offset 42 with length of 10 bytes applying config.json
+python -m ntrprtr -m interpret -t path/to/example.dd -c config.json -o 42 -b 10
+```
+
+```bash
+# Interprets example.dd starting at offset 42 with length of 10 bytes applying config.json
+# Disable Hashing for big files
+python -m ntrprtr -m interpret -t path/to/example.dd -c config.json -o 42 -b 10 -d True
+```
+
+**Programmatically:**
 
 Given bytes to interpret:
 
@@ -135,150 +206,151 @@ Given bytes to interpret:
 Use the following `config.json`:
 
 ```json
-[
-    {
-        "name": "first-byte-with-no-action",
-        "description": "No action",
-        "start": 0,
-        "end": 2
-    },
-    {
-        "name": "first-bytes",
-        "description": "First three bytes",
-        "start": 0,
-        "end": 2,
-        "action":[
-            {
-                "type": "decimal",
-                "endianess": "big"
-            }
-        ]
-    },
-    {
-        "name": "bin-bytes",
-        "description": "Binary bytes",
-        "start": 2,
-        "end": 3,
-        "action": [
-            {
-                "type": "binary",
-                "endianess": "little"
-            }
-        ]
-    },
-    {
-        "name": "ascii-bytes",
-        "description": "Ascii values",
-        "start": 16,
-        "end": 26,
-        "action": [
-            {
-                "type": "ascii",
-                "nonAsciiPlaceholder": "."
-            }
-        ]
-    },
-    {
-        "name": "hexdump-bytes",
-        "description": "Hexdump values",
-        "start": 0,
-        "end": 3,
-        "action": [
-            {
-                "type": "hexdump",
-                "nonAsciiPlaceholder": "."
-            }
-        ]
-    },
-    {
-        "name": "equals-bytes",
-        "description": "Test equals",
-        "start": 29,
-        "end": 30,
-        "action": [
-            {
-                "type": "equals",
-                "endianess": "big",
-                "cmp": [
-                    {
-                        "value": "1D1E",
-                        "description": "Compare 1"
-                    },
-                    {
-                        "value": "1D1",
-                        "description": "Compare 2"
-                    }
-                ],
-                "noMatch": "No Match found!"
-            }
-        ]
-    },
-    {
-        "name": "bitEquals",
-        "description": "Bit equality",
-        "start": 22,
-        "end": 22,
-        "action": [ 
-            // This is an example for multiple actions applied to bytes.
-            // It shall first provide the binary value of the given bytes
-            // and shall check if they equal to the given bits
-            {
-                "type": "binary",
-                "endianess": "big"
-            },
-            {
-                "type": "bitequals",
-                "endianess": "big",
-                "cmp": [
-                    {
-                        "value": "01110111",
-                        "description": "Bits are equal!"
-                    }
-                ],
-                "noMatch": "Bits are not equal!"
-            }
-        ]
-    },
-    {
-        "name": "dos-time-bytes",
-        "description": "DOS time bytes",
-        "start": 32,
-        "end": 33,
-        "action": [
-            {
-                "type": "dostime",
-                "endianess": "little"
-            }
-        ]
-    },
-    {
-        "name": "dos-date-bytes",
-        "description": "DOS date bytes",
-        "start": 34,
-        "end": 35,
-        "action": [
-            {
-                "type": "dosdate",
-                "endianess": "little"
-            },
-            {
-                "type": "dostime",
-                "endianess": "little"
-            }
-        ]
-    },    
-    {
-        "name": "unicode-bytes",
-        "description": "unicode repr.",
-        "start": 48,
-        "end": 59,
-        "action": [
-            {
-                "type": "unicode"
-            }
-        ]
-    }
-]
+{
+    "name": "ntrprtr example",
+    "description": "This is a description within the result",
+    "ntrprtr": [
+        {
+            "name": "first-byte-with-no-action",
+            "description": "No action",
+            "start": 0,
+            "end": 2
+        },
+        {
+            "name": "first-bytes",
+            "description": "First three bytes",
+            "start": 0,
+            "end": 2,
+            "action": [
+                {
+                    "type": "decimal",
+                    "endianess": "little"
+                }
+            ]
+        },
+        {
+            "name": "bin-bytes",
+            "description": "Binary bytes",
+            "start": 2,
+            "end": 3,
+            "action": [
+                {
+                    "type": "binary",
+                    "endianess": "little"
+                }
+            ]
+        },
+        {
+            "name": "ascii-bytes",
+            "description": "Ascii values",
+            "start": 16,
+            "end": 26,
+            "action": [
+                {
+                    "type": "ascii",
+                    "nonAsciiPlaceholder": "."
+                }
+            ]
+        },
+        {
+            "name": "hexdump-bytes",
+            "description": "Hexdump values",
+            "start": 0,
+            "end": 3,
+            "action": [
+                {
+                    "type": "hexdump",
+                    "nonAsciiPlaceholder": "."
+                }
+            ]
+        },
+        {
+            "name": "equals-bytes",
+            "description": "Test equals",
+            "start": 29,
+            "end": 30,
+            "action": [
+                {
+                    "type": "equals",
+                    "endianess": "big",
+                    "cmp": [
+                        {
+                            "value": "1D1E",
+                            "description": "Compare 1"
+                        },
+                        {
+                            "value": "1D1",
+                            "description": "Compare 2"
+                        }
+                    ],
+                    "noMatch": "No Match found!"
+                }
+            ]
+        },
+        {
+            "name": "bitEquals",
+            "description": "Bit equality",
+            "start": 22,
+            "end": 22,
+            "action": [
+                {
+                    "type": "binary",
+                    "endianess": "big"
+                },
+                {
+                    "type": "bitequals",
+                    "endianess": "big",
+                    "cmp": [
+                        {
+                            "value": "01110111",
+                            "description": "Bits are equal!"
+                        }
+                    ],
+                    "noMatch": "Bits are not equal!"
+                }
+            ]
+        },
+        {
+            "name": "dos-time-bytes",
+            "description": "DOS time bytes",
+            "start": 32,
+            "end": 33,
+            "action": [
+                {
+                    "type": "dostime",
+                    "endianess": "little"
+                }
+            ]
+        },
+        {
+            "name": "dos-date-bytes",
+            "description": "DOS date bytes",
+            "start": 34,
+            "end": 35,
+            "action": [
+                {
+                    "type": "dosdate",
+                    "endianess": "little"
+                },
+                {
+                    "type": "dostime",
+                    "endianess": "little"
+                }
+            ]
+        },
+        {
+            "name": "unicode-bytes",
+            "description": "unicode repr.",
+            "start": 48,
+            "end": 59,
+            "action": [
+                {
+                    "type": "unicode"
+                }
+            ]
+        }
+    ]
+}
 ```
 
 Use it programmatically:
@@ -299,12 +371,12 @@ testBytes = fileHandle.read()
 configHandle = open(configPath, encoding="utf8")
 config = json.load(configHandle)
 
-b = ByteInterpreter(testBytes, config)
+b = ByteInterpreter(testBytes, config["ntrprtr"])
 result = b.interpret()
 
 # If you want a standard output use Printer
 p = Printer()
-p.print(result)
+p.print(result, config["name"], config["description"])
 ```
 
 The result is a list of tuples:
@@ -328,6 +400,30 @@ The result is a list of tuples:
 The output from printer looks like the following:
 
 ```
+###########################################################################################
+
+ntrprtr by 5f0
+Interpret bytes through different customizable actions
+
+Current working directory: path/to/ntrprtr
+        Investigated File: path/to/example.dd
+
+                      MD5: 3f8555928a712492c23ca27fb142ebe2
+                   SHA256: 715899b61bf6a6aa02adac9124db94e74ec4f7e837acb7ed7a361acd10045b63
+
+          Offset in Bytes: 0
+
+Datetime: 10/11/1970 10:11:12
+
+###########################################################################################
+
+ntrprtr example
+---------------
+This is a description within the result
+
+
+Analysis
+--------
 
 --> No action
     --------------
@@ -354,7 +450,7 @@ The output from printer looks like the following:
     Action: 
             decimal
     Result: 
-            258
+            131328
 
 
 --> Binary bytes
@@ -401,7 +497,6 @@ The output from printer looks like the following:
             --------   -----------------------------------------------    ---------------- 
                    0   00 01 02 03                                        ....             
             
-
 
 --> Test equals
     --------------
@@ -481,6 +576,10 @@ The output from printer looks like the following:
             unicode
     Result: 
             y_01.j
+
+###########################################################################################
+
+Execution Time: 0.000976 sec
 ```
 
 # License
