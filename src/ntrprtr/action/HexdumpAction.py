@@ -3,13 +3,15 @@ from ntrprtr.action.ActionBase import ActionBase
 class HexdumpAction(ActionBase):
     def __init__(self):
         super().__init__()
+        self._config["nonAsciiPlaceholder"] = "."
 
     def process(self, action, _bytes):
+        self._mergeConfig(action)
         offset_ = 0
         result = self.__createHexHeader()
         splittedBytes = [_bytes[i:i + 16] for i in range(0, len(_bytes), 16)]
         for b_ in splittedBytes:
-            result += self.__createHexRow(offset_, b_.hex(" "), b_, action["nonAsciiPlaceholder"])
+            result += self.__createHexRow(offset_, b_.hex(" "), b_, self._config["nonAsciiPlaceholder"])
             offset_ += 16  
         return result
 

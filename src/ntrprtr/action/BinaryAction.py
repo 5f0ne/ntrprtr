@@ -3,11 +3,13 @@ from ntrprtr.action.ActionBase import ActionBase
 class BinaryAction(ActionBase):
     def __init__(self):
         super().__init__()
+        self._config["endianess"] = "little"
 
     def process(self, action, _bytes):
+        self._mergeConfig(action)
         result = ""
 
-        endianess = action["endianess"]
+        endianess = self._config["endianess"]
         if(endianess == "big"):
             result = self._cnvrtr.hexToBin(_bytes.hex())
         elif(endianess == "little"):

@@ -3,13 +3,15 @@ from ntrprtr.action.ActionBase import ActionBase
 class DOSTimeAction(ActionBase):
     def __init__(self):
         super().__init__()
+        self._config["endianess"] = "little"
 
     def process(self, action, _bytes):
+        self._mergeConfig(action)
         r = ""
         c = self._cnvrtr
         hexValues = _bytes.hex(" ")
         
-        endianess = action["endianess"]
+        endianess = self._config["endianess"]
         if(endianess == "big"):
             r = c.hexToBin(_bytes.hex()).rjust(16, "0")
         elif(endianess == "little"):

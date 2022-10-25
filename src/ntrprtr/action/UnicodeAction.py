@@ -5,4 +5,5 @@ class UnicodeAction(ActionBase):
         super().__init__()
 
     def process(self, action, _bytes):
+        self._mergeConfig(action)
         return _bytes.decode("utf-8")

@@ -21,15 +21,19 @@ class ByteInterpreter():
             amount = c["end"] - c["start"] + 1
             subBytes = [self._bytes[i:i + amount] for i in range(c["start"], c["end"]+1, amount)][0]
             b.extend(subBytes)
+        
             if(c.get("action") != None):
-                actionResult = self.__processActions(c["action"], b)
-                result.append((c["name"], c["description"], c["action"]["type"], b, actionResult))
+                actionResults = []
+                for a in c["action"]:
+                    actionResult = self.__processAction(a, b)
+                    actionResults.append((a["type"], actionResult))     
+                result.append((c["name"], c["description"], c["start"], c["end"], b, actionResults))
             else:
-                actionResult = ""
-                result.append((c["name"], c["description"], "None", b, actionResult)) 
+                result.append((c["name"], c["description"],c["start"], c["end"], b, [("none", "-")])) 
+        
         return result
 
-    def __processActions(self, action, b):
+    def __processAction(self, action, b):
         result = ""
         type_ = action["type"]
         if(type_ == ActionType.DECIMAL):
