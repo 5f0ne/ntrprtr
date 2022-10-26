@@ -7,4 +7,6 @@ class ActionType():
     HEXDUMP = "hexdump"
     DOSDATE = "dosdate"
     DOSTIME = "dostime"
+    UNIXTIME = "unixtime"
     UNICODE = "unicode"
+    ENDIANESS = "endianess"

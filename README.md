@@ -44,6 +44,13 @@ The following actions are available:
     "endianess": "little|big" // Default: little
 }
 
+// Apply endianess to given bytes
+// Specify if you want to interpret it as little or big endian
+{
+    "type": "endianess",
+    "endianess": "little|big" // Default: little
+}
+
 // Get the binary value of the given bytes.
 // Specify if you want to interpret it as little or big endian
 {
@@ -114,6 +121,13 @@ The following actions are available:
 // Specify if you want to interpret it as little or big endian
 {
     "type": "dostime",
+    "endianess": "little|big" // Default: little
+}
+
+// Interprets 4 Bytes as unix time - Convert it to UTC datetime
+// Specify if you want to interpret it as little or big endian
+{
+    "type": "unixtime",
     "endianess": "little|big" // Default: little
 }
 
@@ -208,7 +222,7 @@ To create a binary testfile use a textfile with hex values as input:
 00 01 02 03 04 04 06 07 08 09 0A 0B 0C 0D 0E 0F 
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
 43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
-79 00 5F 00 30 00 31 00 2E 00 6A 00
+79 00 5F 00 30 00 31 00 2E 00 6A 00 D0 14 FE 52
 ```
 
 ```bash
@@ -224,7 +238,7 @@ Given bytes to interpret:
 00 01 02 03 04 04 06 07 08 09 0A 0B 0C 0D 0E 0F 
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
 43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
-79 00 5F 00 30 00 31 00 2E 00 6A 00
+79 00 5F 00 30 00 31 00 2E 00 6A 00 D0 14 FE 52
 ```
 
 Use the following `config.json`:
@@ -248,6 +262,18 @@ Use the following `config.json`:
             "action": [
                 {
                     "type": "decimal",
+                    "endianess": "little"
+                }
+            ]
+        },
+        {
+            "name": "endian-bytes",
+            "description": "Little Endian",
+            "start": 0,
+            "end": 2,
+            "action": [
+                {
+                    "type": "endianess",
                     "endianess": "little"
                 }
             ]
@@ -347,6 +373,18 @@ Use the following `config.json`:
             ]
         },
         {
+            "name": "unixtime-bytes",
+            "description": "unix time bytes",
+            "start": 60,
+            "end": 63,
+            "action": [
+                {
+                    "type": "unixtime",
+                    "endianess": "little"
+                }
+            ]
+        }
+        {
             "name": "dos-date-bytes",
             "description": "DOS date bytes",
             "start": 34,
@@ -354,10 +392,6 @@ Use the following `config.json`:
             "action": [
                 {
                     "type": "dosdate",
-                    "endianess": "little"
-                },
-                {
-                    "type": "dostime",
                     "endianess": "little"
                 }
             ]
@@ -410,11 +444,13 @@ The result is a list of tuples:
     # ActionResult: [0] = Type, [1] = Result
     ('first-byte-with-no-action', 'No action', 0, 2, bytearray(b'\x00\x01\x02'), [('None', '-')])
     ('first-bytes', 'First three bytes', 0, 2, bytearray(b'\x00\x01\x02'), [('decimal', 258)]), 
+    ('endianess-bytes', 'Little Endian', 0, 2, bytearray(b'\x00\x01\x02'), [('endianess', "02 01 00")]), 
     ('bin-bytes', 'Binary bytes', 2, 3, bytearray(b'\x02\x03'), [('binary', '0000 0011 0000 0010')]), 
     ('ascii-bytes', 'Ascii values', 16, 26, bytearray(b'hallo world'), [('ascii', 'hallo world')]), 
     ('hexdump-bytes', 'Hexdump values', 0, 3, bytearray(b'\x00\x01\x02\x03'), [('hexdump', 'see below')]), 
     ('equals-bytes', 'Test equals', 29, 30, bytearray(b'\x1d\x1e'), [('equals', 'Compare 1')]), 
     ('bitEquals', 'Bit equality', 22, 22, bytearray(b'w'), [('binary', '0111 0111'), ('bitequals', 'Bits are equal!')]), 
+    ('unixtime-bytes', 'unix time bytes', 60, 63, bytearray(b'C\xd0\x14\xfe\x52'), [('unixtime', '14.02.14 13:06:24 UTC')]),
     ('dos-time-bytes', 'DOS time bytes', 32, 33, bytearray(b'C\xb7'), [('dostime', '22:58:6')]), 
     ('dos-date-bytes', 'DOS date bytes', 34, 35, bytearray(b'gB'), [('dosdate', '7.3.2013')]), 
     ('unicode-bytes', 'unicode repr.', 48, 59, bytearray(b'y\x00_\x000\x001\x00.\x00j\x00'), [('unicode', 'y_01.j')])
@@ -492,6 +528,21 @@ Analysis
             decimal
     Result: 
             131328
+
+
+--> Little Endian
+    --------------
+      Start Byte: 0 (0x0)
+        End Byte: 2 (0x2)
+    Nr. of Bytes: 3
+    --------------
+     Bytes: 
+            00 01 02
+    --------------
+    Action: 
+            endianess
+    Result: 
+            02 01 00
 
 
 --> Binary bytes
@@ -626,6 +677,21 @@ Analysis
             unicode
     Result: 
             y_01.j
+
+
+--> unix time bytes
+    --------------
+      Start Byte: 60 (0x3c)
+        End Byte: 63 (0x3f)
+    Nr. of Bytes: 4
+    --------------
+     Bytes: 
+            D0 14 FE 52
+    --------------
+    Action: 
+            unixtime
+    Result: 
+            14.02.14 13:06:24
 
 ###########################################################################################
 

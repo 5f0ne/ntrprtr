@@ -8,6 +8,8 @@ from ntrprtr.action.EqualsAction import EqualsAction
 from ntrprtr.action.BitEqualsAction import BitEqualsAction
 from ntrprtr.action.HexdumpAction import HexdumpAction
 from ntrprtr.action.UnicodeAction import UnicodeAction
+from ntrprtr.action.EndianessAction import EndianessAction
+from ntrprtr.action.UnixTimeAction import UnixTimeAction
 
 class ByteInterpreter():
     def __init__(self, bytes, config) -> None:
@@ -36,6 +38,8 @@ class ByteInterpreter():
     def __processAction(self, action, b):
         result = ""
         type_ = action["type"]
+        if(type_ == ActionType.ENDIANESS):
+            result = EndianessAction().process(action, b)
         if(type_ == ActionType.DECIMAL):
             result = DecimalAction().process(action, b)
         elif(type_ == ActionType.ASCII):
@@ -52,6 +56,8 @@ class ByteInterpreter():
             result = DOSDateAction().process(action, b)
         elif(type_ == ActionType.DOSTIME):
             result = DOSTimeAction().process(action, b)
+        elif(type_ == ActionType.UNIXTIME):
+            result = UnixTimeAction().process(action, b)
         elif(type_ == ActionType.UNICODE):
             result = UnicodeAction().process(action, b)
 
