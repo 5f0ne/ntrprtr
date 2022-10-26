@@ -59,7 +59,7 @@ def main(args_=None):
         else:
             hash = HashCalc(args.target)
 
-        c.printHeader(args.target, hash, args.offset)
+        c.printHeader(args.target, hash, args)
 
         if(args.target == ""):
             print("Please provide a path to a file for reading bytes!")
