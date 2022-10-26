@@ -20,8 +20,9 @@ class Printer():
             print("")
             print("--> " + result[1])
             print("    --------------")
-            print("    Start Byte: " + str(result[2]))
-            print("      End Byte: " + str(result[3]))
+            print("      Start Byte: " + str(result[2]) + " (" + hex(result[2]) + ")")
+            print("        End Byte: " + str(result[3]) + " (" + hex(result[3]) + ")")
+            print("    Nr. of Bytes: " + str(result[3] - result[2] + 1))
             print("    --------------")
             for actionResult in result[5]:
                 if(actionResult[0] == ActionType.HEXDUMP):

@@ -35,7 +35,12 @@ class Controller():
         print("Configuration File exists already: " + name)
         print("")
         self.printExecutionTime()
-    
+
+    def printTestfileSuccessMessage(self, name):
+        print("")
+        print("Testfile created successfully: " + name)
+        print("")
+        self.printExecutionTime()    
 
     def printExecutionTime(self):
         end = time.time()

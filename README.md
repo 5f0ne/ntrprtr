@@ -127,7 +127,7 @@ The following actions are available:
 
 # Options
 
-`python -m ntrprtr --mode {config,interpret} [--amount AMOUNT] [--name NAME] [--target TARGET] [--config CONFIG] [--result RESULT] [--offset OFFSET] [--bytes BYTES]`
+`python -m ntrprtr --mode {config,interpret,testfile} [--amount AMOUNT] [--name NAME] [--target TARGET] [--config CONFIG] [--result RESULT] [--offset OFFSET] [--bytes BYTES]`
 
 <hr>
 
@@ -135,7 +135,7 @@ The following actions are available:
 
 | Option | Short | Type | Default | Description |
 |---|---|---|---|---|
-|--mode | -m | String | - | config = Create a configuration template <br> interpret = Overview of disk space usage |
+|--mode | -m | String | - | config = Create a configuration template <br> interpret = Overview of disk space usage <br> testfile = Create a binary testfile |
 
 <hr>
 
@@ -159,6 +159,15 @@ The following actions are available:
 |--offset | -o | Int | 0 | Offset in bytes to start reading |
 |--bytes  | -b | Int | 0 | No. of bytes to read starting from offset |
 |--disableHashing | -d | Bool | False | True if hashing shall be disabled <br> False otherwise|
+
+<hr>
+
+**mode = testfile**
+
+| Option | Short | Type | Default | Description |
+|---|---|---|---|---|
+|--input | -i | String | "" | Path to textfile with hex values|
+|--output | -u | String | "" | Path to binary test file to be created |
 
 
 # Example
@@ -189,6 +198,22 @@ python -m ntrprtr -m interpret -t path/to/example.dd -c config.json -o 42 -b 10
 # Interprets example.dd starting at offset 42 with length of 10 bytes applying config.json
 # Disable Hashing for big files
 python -m ntrprtr -m interpret -t path/to/example.dd -c config.json -o 42 -b 10 -d True
+```
+
+To create a binary testfile use a textfile with hex values as input:
+
+```bash
+# Max. 16 hex values per row within a .txt
+# hexdata.txt
+00 01 02 03 04 04 06 07 08 09 0A 0B 0C 0D 0E 0F 
+68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
+43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
+79 00 5F 00 30 00 31 00 2E 00 6A 00
+```
+
+```bash
+# Create hex.bin from hexdata.txt
+python -m ntrprtr -m testfile -i path/to/hexdata.txt -u hex.bin
 ```
 
 **Programmatically:**
@@ -392,9 +417,8 @@ The result is a list of tuples:
     ('bitEquals', 'Bit equality', 22, 22, bytearray(b'w'), [('binary', '0111 0111'), ('bitequals', 'Bits are equal!')]), 
     ('dos-time-bytes', 'DOS time bytes', 32, 33, bytearray(b'C\xb7'), [('dostime', '22:58:6')]), 
     ('dos-date-bytes', 'DOS date bytes', 34, 35, bytearray(b'gB'), [('dosdate', '7.3.2013')]), 
-    ('unicode-bytes', 'unicode repr.', 48, 59, bytearray(b'y\x00_\x000\x001\x00.\x00j\x00'), [('unicode', 'y_01.j')])]
-
-
+    ('unicode-bytes', 'unicode repr.', 48, 59, bytearray(b'y\x00_\x000\x001\x00.\x00j\x00'), [('unicode', 'y_01.j')])
+]
 ```
 The output from printer looks like the following:
 
@@ -412,9 +436,10 @@ Current working directory: path/to/ntrprtr
 
           Offset in Bytes: 0
 
-Datetime: 10/11/1970 10:11:12
+                 Datetime: 10/11/1970 10:11:12
 
 ###########################################################################################
+
 
 ntrprtr example
 ---------------
@@ -426,8 +451,24 @@ Analysis
 
 --> No action
     --------------
-    Start Byte: 0
-      End Byte: 2
+      Start Byte: 0 (0x0)
+        End Byte: 2 (0x2)
+    Nr. of Bytes: 3
+    --------------
+     Bytes: 
+            00 01 02
+    --------------
+    Action: 
+            none
+    Result: 
+            -
+
+
+--> No action
+    --------------
+      Start Byte: 0 (0x0)
+        End Byte: 2 (0x2)
+    Nr. of Bytes: 3
     --------------
      Bytes: 
             00 01 02
@@ -440,8 +481,9 @@ Analysis
 
 --> First three bytes
     --------------
-    Start Byte: 0
-      End Byte: 2
+      Start Byte: 0 (0x0)
+        End Byte: 2 (0x2)
+    Nr. of Bytes: 3
     --------------
      Bytes: 
             00 01 02
@@ -454,8 +496,9 @@ Analysis
 
 --> Binary bytes
     --------------
-    Start Byte: 2
-      End Byte: 3
+      Start Byte: 2 (0x2)
+        End Byte: 3 (0x3)
+    Nr. of Bytes: 2
     --------------
      Bytes: 
             02 03
@@ -468,8 +511,9 @@ Analysis
 
 --> Ascii values
     --------------
-    Start Byte: 16
-      End Byte: 26
+      Start Byte: 16 (0x10)
+        End Byte: 26 (0x1a)
+    Nr. of Bytes: 11
     --------------
      Bytes: 
             68 61 6C 6C 6F 20 77 6F 72 6C 64
@@ -482,8 +526,9 @@ Analysis
 
 --> Hexdump values
     --------------
-    Start Byte: 0
-      End Byte: 3
+      Start Byte: 0 (0x0)
+        End Byte: 3 (0x3)
+    Nr. of Bytes: 4
     --------------
      Bytes: 
             See below
@@ -497,10 +542,12 @@ Analysis
                    0   00 01 02 03                                        ....             
             
 
+
 --> Test equals
     --------------
-    Start Byte: 29
-      End Byte: 30
+      Start Byte: 29 (0x1d)
+        End Byte: 30 (0x1e)
+    Nr. of Bytes: 2
     --------------
      Bytes: 
             1D 1E
@@ -513,8 +560,9 @@ Analysis
 
 --> Bit equality
     --------------
-    Start Byte: 22
-      End Byte: 22
+      Start Byte: 22 (0x16)
+        End Byte: 22 (0x16)
+    Nr. of Bytes: 1
     --------------
      Bytes: 
             77
@@ -532,8 +580,9 @@ Analysis
 
 --> DOS time bytes
     --------------
-    Start Byte: 32
-      End Byte: 33
+      Start Byte: 32 (0x20)
+        End Byte: 33 (0x21)
+    Nr. of Bytes: 2
     --------------
      Bytes: 
             43 B7
@@ -546,8 +595,9 @@ Analysis
 
 --> DOS date bytes
     --------------
-    Start Byte: 34
-      End Byte: 35
+      Start Byte: 34 (0x22)
+        End Byte: 35 (0x23)
+    Nr. of Bytes: 2
     --------------
      Bytes: 
             67 42
@@ -565,8 +615,9 @@ Analysis
 
 --> unicode repr.
     --------------
-    Start Byte: 48
-      End Byte: 59
+      Start Byte: 48 (0x30)
+        End Byte: 59 (0x3b)
+    Nr. of Bytes: 12
     --------------
      Bytes: 
             79 00 5F 00 30 00 31 00 2E 00 6A 00
