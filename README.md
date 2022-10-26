@@ -135,8 +135,7 @@ The following actions are available:
 
 | Option | Short | Type | Default | Description |
 |---|---|---|---|---|
-|--mode | -p | String | - | config = Create a configuration template <br> interpret = Overview of disk space usage |
-|--offset | -o | Int | - | The offset in bytes to start reading |
+|--mode | -m | String | - | config = Create a configuration template <br> interpret = Overview of disk space usage |
 
 <hr>
 
