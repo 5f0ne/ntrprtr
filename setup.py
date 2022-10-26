@@ -5,7 +5,7 @@ with open("README.md", "r") as r:
 
 setup(
     name="ntrprtr",            
-    version="2.0.3",
+    version="2.0.4",
     author="5f0",
     url="https://github.com/5f0ne/ntrprtr",
     description="Interpret bytes through different customizable actions",
