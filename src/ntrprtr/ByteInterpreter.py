@@ -22,7 +22,7 @@ class ByteInterpreter():
             subBytes = [self._bytes[i:i + amount] for i in range(c["start"], c["end"]+1, amount)][0]
             b.extend(subBytes)
         
-            if(c.get("action") != None):
+            if(c.get("action") != None and len(c["action"]) > 0):
                 actionResults = []
                 for a in c["action"]:
                     actionResult = self.__processAction(a, b)
