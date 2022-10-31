@@ -10,3 +10,4 @@ class ActionType():
     UNIXTIME = "unixtime"
     UNICODE = "unicode"
     ENDIANESS = "endianess"
+    WIN32TIME = "win32time"

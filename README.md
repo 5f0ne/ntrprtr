@@ -137,6 +137,13 @@ The following actions are available:
     "type": "dosdate",
     "endianess": "little|big" // Default: little
 }
+
+// Interprets 8 Bytes as Win32 Epoch Time (01.01.1601)
+// Specify if you want to interpret it as little or big endian
+{
+    "type": "win32time",
+    "endianess": "little|big" // Default: little
+}
 ```
 
 # Options
@@ -223,6 +230,7 @@ To create a binary testfile use a textfile with hex values as input:
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
 43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
 79 00 5F 00 30 00 31 00 2E 00 6A 00 D0 14 FE 52
+00 72 25 8B EF EA D8 01
 ```
 
 ```bash
@@ -239,6 +247,7 @@ Given bytes to interpret:
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
 43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
 79 00 5F 00 30 00 31 00 2E 00 6A 00 D0 14 FE 52
+00 72 25 8B EF EA D8 01
 ```
 
 Use the following `config.json`:
@@ -397,6 +406,26 @@ Use the following `config.json`:
             ]
         },
         {
+            "name": "win32time",
+            "description": "win32 time bytes",
+            "start": 64,
+            "end": 71,
+            "action": [
+                {
+                    "type": "endianess",
+                    "endianess": "little"
+                },
+                {
+                    "type": "decimal",
+                    "endianess": "little"
+                },
+                {
+                    "type": "win32time",
+                    "endianess": "little"
+                }
+            ]
+        }
+        {
             "name": "unicode-bytes",
             "description": "unicode repr.",
             "start": 48,
@@ -451,6 +480,7 @@ The result is a list of tuples:
     ('equals-bytes', 'Test equals', 29, 30, bytearray(b'\x1d\x1e'), [('equals', 'Compare 1')]), 
     ('bitEquals', 'Bit equality', 22, 22, bytearray(b'w'), [('binary', '0111 0111'), ('bitequals', 'Bits are equal!')]), 
     ('unixtime-bytes', 'unix time bytes', 60, 63, bytearray(b'C\xd0\x14\xfe\x52'), [('unixtime', '14.02.14 13:06:24 UTC')]),
+    ('win32time', 'win32 time bytes', 64, 71, bytearray(b'C\x00\x72\x25\x8B\xEF\xEA\xD8\x01'), [('win32time', '28.10.22 17:05:56 UTC')]),
     ('dos-time-bytes', 'DOS time bytes', 32, 33, bytearray(b'C\xb7'), [('dostime', '22:58:6')]), 
     ('dos-date-bytes', 'DOS date bytes', 34, 35, bytearray(b'gB'), [('dosdate', '7.3.2013')]), 
     ('unicode-bytes', 'unicode repr.', 48, 59, bytearray(b'y\x00_\x000\x001\x00.\x00j\x00'), [('unicode', 'y_01.j')])
@@ -692,6 +722,20 @@ Analysis
             unixtime
     Result: 
             14.02.14 13:06:24 UTC
+
+--> win32 time bytes
+    --------------
+      Start Byte: 64 (0x40)
+        End Byte: 71 (0x47)
+    Nr. of Bytes: 8
+    --------------
+     Bytes: 
+            00 72 25 8B EF EA D8 01
+    --------------
+    Action: 
+            win32time
+    Result: 
+            28.10.22 17:05:56 UTC
 
 ###########################################################################################
 
