@@ -1,6 +1,6 @@
 from ntrprtr.action.ActionBase import ActionBase
 
-class ExtFlagAction(ActionBase):
+class ExtFileModeAction(ActionBase):
     def __init__(self):
         super().__init__()
         self._config["endianess"] = "little"
