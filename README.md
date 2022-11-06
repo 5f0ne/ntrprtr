@@ -144,6 +144,13 @@ The following actions are available:
     "type": "win32time",
     "endianess": "little|big" // Default: little
 }
+
+// Interprets 2 Bytes as ext file mode
+// Specify if you want to interpret it as little or big endian
+{
+    "type": "extfilemode",
+    "endianess": "little|big" // Default: little
+}
 ```
 
 # Options
@@ -230,7 +237,7 @@ To create a binary testfile use a textfile with hex values as input:
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
 43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
 79 00 5F 00 30 00 31 00 2E 00 6A 00 D0 14 FE 52
-00 72 25 8B EF EA D8 01
+00 72 25 8B EF EA D8 01 ED 41
 ```
 
 ```bash
@@ -247,7 +254,7 @@ Given bytes to interpret:
 68 61 6C 6C 6F 20 77 6F 72 6C 64 1B 1C 1D 1E 1F
 43 B7 67 42 00 00 00 00 00 00 00 00 00 00 00 00
 79 00 5F 00 30 00 31 00 2E 00 6A 00 D0 14 FE 52
-00 72 25 8B EF EA D8 01
+00 72 25 8B EF EA D8 01 ED 41
 ```
 
 Use the following `config.json`:
@@ -435,6 +442,18 @@ Use the following `config.json`:
                     "type": "unicode"
                 }
             ]
+        },
+         {
+            "name": "extfilemode",
+            "description": "extfilemode bytes",
+            "start": 72,
+            "end": 73,
+            "action": [
+                {
+                    "type": "extfilemode",
+                    "endianess": "little"
+                }
+            ]
         }
     ]
 }
@@ -484,6 +503,7 @@ The result is a list of tuples:
     ('dos-time-bytes', 'DOS time bytes', 32, 33, bytearray(b'C\xb7'), [('dostime', '22:58:6')]), 
     ('dos-date-bytes', 'DOS date bytes', 34, 35, bytearray(b'gB'), [('dosdate', '7.3.2013')]), 
     ('unicode-bytes', 'unicode repr.', 48, 59, bytearray(b'y\x00_\x000\x001\x00.\x00j\x00'), [('unicode', 'y_01.j')])
+    ('extfilemode', 'filemode bytes', 72, 73, bytearray(b'\xed\x41'), [('Result')])
 ]
 ```
 The output from printer looks like the following:
@@ -736,6 +756,27 @@ Analysis
             win32time
     Result: 
             28.10.22 17:05:56 UTC
+
+--> extfilemode bytes
+    --------------
+      Start Byte: 72 (0x48)
+        End Byte: 73 (0x49)
+    Nr. of Bytes: 2
+    --------------
+     Bytes: 
+            ED 41
+    --------------
+    Action: 
+            extfilemode
+    Result: 
+              File Type: 0100
+                         Directory
+                  Flags: 000
+                         SUID Bit: 0 
+                         SGID Bit: 0 
+                       Sticky Bit: 0
+            Permissions: 111 101 101
+                         rwx r-x r-x
 
 ###########################################################################################
 

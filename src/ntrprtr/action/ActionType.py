@@ -11,3 +11,4 @@ class ActionType():
     UNICODE = "unicode"
     ENDIANESS = "endianess"
     WIN32TIME = "win32time"
+    EXTFILEMODE = "extfilemode"

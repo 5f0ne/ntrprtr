@@ -45,5 +45,10 @@ class Printer():
                     print("    " + "Action: ")
                     print("            " + actionResult[0])
                     print("    " + "Result: ")
-                    print("            " + str(actionResult[1]))
+                    if(actionResult[0] == ActionType.EXTFILEMODE):
+                        dump = actionResult[1].split("\n")
+                        for l in dump:
+                            print("            " + l)
+                    else:
+                        print("            " + str(actionResult[1]))
             print("")

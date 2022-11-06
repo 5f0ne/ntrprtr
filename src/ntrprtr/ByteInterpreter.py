@@ -11,6 +11,7 @@ from ntrprtr.action.UnicodeAction import UnicodeAction
 from ntrprtr.action.EndianessAction import EndianessAction
 from ntrprtr.action.UnixTimeAction import UnixTimeAction
 from ntrprtr.action.Win32TimeAction import Win32TimeAction
+from ntrprtr.action.ExtFileModeAction import ExtFileModeAction
 
 class ByteInterpreter():
     def __init__(self, bytes, config) -> None:
@@ -61,6 +62,8 @@ class ByteInterpreter():
             result = UnixTimeAction().process(action, b)
         elif(type_ == ActionType.WIN32TIME):
             result = Win32TimeAction().process(action, b)
+        elif(type_ == ActionType.EXTFILEMODE):
+            result = ExtFileModeAction().process(action, b)
         elif(type_ == ActionType.UNICODE):
             result = UnicodeAction().process(action, b)
 
